@@ -30,11 +30,14 @@ body {
 .section.active { display:block; }
 
 /* ============ SIDEBAR ============ */
+:root {
+  --sidebar-width: 260px;
+}
 .sidebar {
   position: fixed;
   top: 0;
   left: -280px;
-  width: 260px;
+  width: var(--sidebar-width);
   height: 100vh;
   background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
   color: #fff;
@@ -75,6 +78,9 @@ body {
   line-height: 1;
   padding: 0;
   margin-right: 4px;
+}
+.sidebar.open .sidebar-close {
+  display: block;
 }
 .sidebar-nav {
   flex: 1;
@@ -135,6 +141,26 @@ body {
 .sidebar-toggle:hover {
   background: var(--bg);
   color: var(--primary);
+}
+
+/* Desktop: sidebar always visible */
+@media (min-width: 901px) {
+  .sidebar {
+    left: 0;
+  }
+  .sidebar-overlay {
+    display: none !important;
+  }
+  .sidebar-toggle {
+    display: none;
+  }
+  .sidebar-close {
+    display: none !important;
+  }
+  .section.active#dashboard-section,
+  .section.active#form-section {
+    margin-left: var(--sidebar-width);
+  }
 }
 
 /* ============ AUTH ============ */
