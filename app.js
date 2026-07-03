@@ -293,7 +293,7 @@ function showNewApp() {
 
 // ============ PDF VIEWER ============
 function openPDFViewer() {
-  window.open('fotos/fotos.pdf', '_blank')
+  window.open('fotos.pdf', '_blank')
 }
 
 function getFormData() {

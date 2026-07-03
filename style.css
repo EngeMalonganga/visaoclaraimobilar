@@ -33,7 +33,7 @@ body {
 #auth-section {
   background:
     linear-gradient(135deg, rgba(29,78,216,0.9), rgba(37,99,235,0.7), rgba(96,165,250,0.4)),
-    url('../foto/pag1_img1.jpg') center/cover no-repeat;
+    url('pag1_img1.jpg') center/cover no-repeat;
   padding: 20px;
 }
 .section.active#auth-section {
@@ -367,7 +367,7 @@ tbody tr:last-child td { border-bottom:none; }
   padding: 24px;
   background:
     linear-gradient(135deg, rgba(29,78,216,0.92), rgba(37,99,235,0.75), rgba(96,165,250,0.35)),
-    url('../foto/pag10_img1.jpg') center/cover no-repeat;
+    url('pag10_img1.jpg') center/cover no-repeat;
   background-attachment: fixed;
 }
 
@@ -376,7 +376,7 @@ tbody tr:last-child td { border-bottom:none; }
   padding: 20px;
   background:
     linear-gradient(135deg, rgba(29,78,216,0.9), rgba(37,99,235,0.7), rgba(96,165,250,0.4)),
-    url('../foto/pag2_img1.jpg') center/cover no-repeat;
+    url('pag2_img1.jpg') center/cover no-repeat;
 }
 .section.active#success-section {
   display: flex;
