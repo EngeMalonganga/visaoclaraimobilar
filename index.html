@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VISÃO CLARA - Portal do Cliente</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='40' height='40' rx='8' fill='%2320C997'/%3E%3Ctext x='20' y='28' text-anchor='middle' fill='%23fff' font-size='20' font-weight='bold'%3EVC%3C/text%3E%3C/svg%3E">
+  <meta name="description" content="VISÃO CLARA - Portal de Candidatura de Imóveis. Submeta a sua candidatura online.">
+  <meta name="keywords" content="imóveis, candidatura, apartamento, vivenda, Angola, Luanda">
+  <meta property="og:title" content="VISÃO CLARA - Portal do Cliente">
+  <meta property="og:description" content="Submeta a sua candidatura para aquisição de imóveis">
+  <meta property="og:type" content="website">
+</head>
+
+<body>
+
+  <div id="app">
+
+    <!-- ========== AUTH SECTION ========== -->
+    <div id="auth-section" class="section active">
+      <div class="auth-container">
+        <div class="auth-header">
+          <div class="auth-logo">
+            <img src="logo/logo.png" alt="VISÃO CLARA" width="80">
+          </div>
+          <h1>VISÃO CLARA</h1>
+          <p>Portal do Cliente</p>
+        </div>
+        <div class="auth-tabs">
+          <button class="auth-tab active" onclick="showTab('login')">Entrar</button>
+          <button class="auth-tab" onclick="showTab('register')">Criar Conta</button>
+        </div>
+        <!-- Login Form -->
+        <form id="login-form" class="auth-form active" onsubmit="event.preventDefault(); login()">
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" id="login-email" placeholder="seu@email.com" required>
+          </div>
+          <div class="form-group">
+            <label>Senha</label>
+            <input type="password" id="login-password" placeholder="••••••" required>
+          </div>
+          <button type="submit" class="btn btn-primary">Entrar</button>
+          <p class="auth-footer">Não tem conta? <a href="#" onclick="showTab('register')">Criar conta</a></p>
+        </form>
+        <!-- Register Form -->
+        <form id="register-form" class="auth-form" onsubmit="event.preventDefault(); register()">
+          <div class="form-group">
+            <label>Nome completo</label>
+            <input type="text" id="reg-nome" placeholder="Seu nome" required>
+          </div>
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" id="reg-email" placeholder="seu@email.com" required>
+          </div>
+          <div class="form-group">
+            <label>Telefone</label>
+            <input type="tel" id="reg-telefone" placeholder="+244 900 000 000" required>
+          </div>
+          <div class="form-group">
+            <label>Senha</label>
+            <input type="password" id="reg-password" placeholder="Mínimo 6 caracteres" minlength="6" required>
+          </div>
+          <button type="submit" class="btn btn-primary">Criar Conta</button>
+          <p class="auth-footer">Já tem conta? <a href="#" onclick="showTab('login')">Entrar</a></p>
+        </form>
+        <button class="btn-auth-pdf" onclick="openPDFViewer()">Ilustração do Projeto</button>
+      </div>
+    </div>
+
+    <!-- ========== DASHBOARD SECTION ========== -->
+    <div id="dashboard-section" class="section">
+      <!-- Top Bar -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <svg viewBox="0 0 40 40" width="36" height="36">
+            <rect width="40" height="40" rx="8" fill="#20C997" />
+            <text x="20" y="28" text-anchor="middle" fill="#fff" font-size="20" font-weight="bold">VC</text>
+          </svg>
+          <h2>VISÃO CLARA</h2>
+        </div>
+        <div class="topbar-center">
+          <span class="topbar-title">Dashboard</span>
+        </div>
+        <div class="topbar-right">
+          <button class="btn btn-sm btn-outline" onclick="showNewApp()">+ Nova Candidatura</button>
+          <button class="btn btn-sm btn-outline" onclick="openPDFViewer()">Ilustração do Projeto</button>
+          <div class="user-info">
+            <span id="user-name-display">Cliente</span>
+            <button class="btn btn-sm btn-ghost" onclick="logout()">Sair</button>
+          </div>
+        </div>
+      </header>
+
+      <main class="dashboard-main">
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+          <div class="stats-card" style="--card-color: #20C997">
+            <div class="stats-card-icon">
+              <svg viewBox="0 0 24 24" width="24" height="24">
+                <path fill="currentColor"
+                  d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14l-5-5 1.41-1.41L12 14.17l4.59-4.58L18 11l-6 6z" />
+              </svg>
+            </div>
+            <div class="stats-card-content">
+              <span class="stats-card-label">Total Candidaturas</span>
+              <span class="stats-card-value" id="stat-total">0</span>
+            </div>
+          </div>
+          <div class="stats-card" style="--card-color: #F1C40F">
+            <div class="stats-card-icon">
+              <svg viewBox="0 0 24 24" width="24" height="24">
+                <path fill="currentColor"
+                  d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+              </svg>
+            </div>
+            <div class="stats-card-content">
+              <span class="stats-card-label">Em Análise</span>
+              <span class="stats-card-value" id="stat-analise">0</span>
+            </div>
+          </div>
+          <div class="stats-card" style="--card-color: #2ECC71">
+            <div class="stats-card-icon">
+              <svg viewBox="0 0 24 24" width="24" height="24">
+                <path fill="currentColor" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
+              </svg>
+            </div>
+            <div class="stats-card-content">
+              <span class="stats-card-label">Aprovadas</span>
+              <span class="stats-card-value" id="stat-aprovadas">0</span>
+            </div>
+          </div>
+          <div class="stats-card" style="--card-color: #E74C3C">
+            <div class="stats-card-icon">
+              <svg viewBox="0 0 24 24" width="24" height="24">
+                <path fill="currentColor"
+                  d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+              </svg>
+            </div>
+            <div class="stats-card-content">
+              <span class="stats-card-label">Rejeitadas</span>
+              <span class="stats-card-value" id="stat-rejeitadas">0</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="charts-grid">
+          <div class="chart-card">
+            <h3>Candidaturas por Status</h3>
+            <canvas id="chartBar"></canvas>
+          </div>
+          <div class="chart-card">
+            <h3>Crescimento Mensal</h3>
+            <canvas id="chartLine"></canvas>
+          </div>
+          <div class="chart-card">
+            <h3>Imóveis por Tipo</h3>
+            <canvas id="chartPie"></canvas>
+          </div>
+        </div>
+
+        <!-- Recent Applications -->
+        <div class="table-card">
+          <div class="table-card-header">
+            <h3>Minhas Candidaturas</h3>
+            <button class="btn btn-sm btn-primary" onclick="showNewApp()">+ Nova</button>
+          </div>
+          <table id="applications-table">
+            <thead>
+              <tr>
+                <th>Nº</th>
+                <th>Tipo</th>
+                <th>Localização</th>
+                <th>Data</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="table-body">
+              <tr>
+                <td colspan="5" style="text-align:center;color:#999">Nenhuma candidatura encontrada</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </main>
+    </div>
+
+    <!-- ========== APPLICATION FORM SECTION ========== -->
+    <div id="form-section" class="section">
+      <header class="topbar">
+        <div class="topbar-left">
+          <svg viewBox="0 0 40 40" width="36" height="36">
+            <rect width="40" height="40" rx="8" fill="#20C997" />
+            <text x="20" y="28" text-anchor="middle" fill="#fff" font-size="20" font-weight="bold">VC</text>
+          </svg>
+          <h2>VISÃO CLARA</h2>
+        </div>
+        <div class="topbar-center">
+          <span class="topbar-title">ÁREA DO CANDIDATO</span>
+        </div>
+        <div class="topbar-right">
+          <button class="btn btn-sm btn-ghost" onclick="logout()">Sair</button>
+        </div>
+      </header>
+
+      <main class="form-main">
+        <form id="candidatura-form" onsubmit="event.preventDefault(); submitApplication()">
+
+          <!-- 1. IDENTIFICAÇÃO DO CANDIDATO -->
+          <div class="form-section-block">
+            <h2 class="section-title">1. IDENTIFICAÇÃO DO CANDIDATO</h2>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Nome completo</label>
+                <input type="text" id="f-nome" required>
+              </div>
+              <div class="form-group">
+                <label>Data de nascimento</label>
+                <input type="date" id="f-nascimento" required>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Bilhete de Identidade</label>
+                <input type="text" id="f-bi" placeholder="Nº do BI">
+              </div>
+              <div class="form-group">
+                <label>NIF</label>
+                <input type="text" id="f-nif" placeholder="Nº de Contribuinte">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Nacionalidade</label>
+              <input type="text" id="f-nacionalidade" placeholder="Angolana">
+            </div>
+            <div class="form-group">
+              <label>Morada atual</label>
+              <input type="text" id="f-morada" placeholder="Morada completa">
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Telefone</label>
+                <input type="tel" id="f-telefone" placeholder="+244 900 000 000" required>
+              </div>
+              <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="f-email-cand" readonly>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. PERFIL DA CANDIDATURA -->
+          <div class="form-section-block">
+            <h2 class="section-title">2. PERFIL DA CANDIDATURA</h2>
+            <div class="form-group">
+              <label>Pretende</label>
+              <div class="radio-group">
+                <label class="radio-card"><input type="radio" name="pretende" value="Comprar"><span>Comprar</span></label>
+                <label class="radio-card"><input type="radio" name="pretende" value="Arrendar"><span>Arrendar</span></label>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Tipo de imóvel</label>
+              <div class="radio-group">
+                <label class="radio-card"><input type="radio" name="tipo-imovel" value="Apartamento"><span>Apartamento</span></label>
+                <label class="radio-card"><input type="radio" name="tipo-imovel" value="Vivenda"><span>Vivenda</span></label>
+                <label class="radio-card"><input type="radio" name="tipo-imovel" value="Escritorio"><span>Escritório</span></label>
+                <label class="radio-card"><input type="radio" name="tipo-imovel" value="Loja"><span>Loja</span></label>
+                <label class="radio-card"><input type="radio" name="tipo-imovel" value="Terreno"><span>Terreno</span></label>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Localização pretendida</label>
+              <input type="text" id="f-localizacao" placeholder="Bairro, Município">
+            </div>
+            <div class="form-group">
+              <label>Quartos</label>
+              <div class="radio-group">
+                <label class="radio-card"><input type="radio" name="quartos" value="T1"><span>T1</span></label>
+                <label class="radio-card"><input type="radio" name="quartos" value="T2"><span>T2</span></label>
+                <label class="radio-card"><input type="radio" name="quartos" value="T3"><span>T3</span></label>
+                <label class="radio-card"><input type="radio" name="quartos" value="T4+"><span>T4+</span></label>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. INFORMAÇÕES PROFISSIONAIS -->
+          <div class="form-section-block">
+            <h2 class="section-title">3. INFORMAÇÕES PROFISSIONAIS</h2>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Profissão</label>
+                <input type="text" id="f-profissao" placeholder="Profissão">
+              </div>
+              <div class="form-group">
+                <label>Empresa</label>
+                <input type="text" id="f-empresa" placeholder="Nome da empresa">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Cargo</label>
+              <input type="text" id="f-cargo" placeholder="Cargo atual">
+            </div>
+            <div class="form-group">
+              <label>Rendimento mensal</label>
+              <div class="radio-group vertical">
+                <label class="radio-card"><input type="radio" name="rendimento" value="Até 100.000 Kz"><span>Até 100.000 Kz</span></label>
+                <label class="radio-card"><input type="radio" name="rendimento" value="100.000 – 300.000 Kz"><span>100.000 – 300.000 Kz</span></label>
+                <label class="radio-card"><input type="radio" name="rendimento" value="300.000 – 500.000 Kz"><span>300.000 – 500.000 Kz</span></label>
+                <label class="radio-card"><input type="radio" name="rendimento" value="Superior a 500.000 Kz"><span>Superior a 500.000 Kz</span></label>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4. DOCUMENTAÇÃO -->
+          <div class="form-section-block">
+            <h2 class="section-title">4. DOCUMENTAÇÃO</h2>
+            <p class="upload-label">Anexar documentos:</p>
+            <div class="upload-area" data-target="bi">
+              <svg viewBox="0 0 24 24" width="36" height="36"><path fill="currentColor" d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/></svg>
+              <p>Bilhete de Identidade</p>
+              <span class="upload-hint">Clique ou arraste para upload</span>
+              <input type="file" accept=".pdf,.png,.jpg,.jpeg" hidden>
+            </div>
+            <div class="upload-area" data-target="rendimento">
+              <svg viewBox="0 0 24 24" width="36" height="36"><path fill="currentColor" d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/></svg>
+              <p>Comprovativo de rendimento</p>
+              <span class="upload-hint">Clique ou arraste para upload</span>
+              <input type="file" accept=".pdf,.png,.jpg,.jpeg" hidden>
+            </div>
+            <div class="upload-area" data-target="outros">
+              <svg viewBox="0 0 24 24" width="36" height="36"><path fill="currentColor" d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/></svg>
+              <p>Outros documentos</p>
+              <span class="upload-hint">Clique ou arraste para upload</span>
+              <input type="file" accept=".pdf,.png,.jpg,.jpeg" hidden>
+            </div>
+          </div>
+
+          <!-- 5. OBSERVAÇÕES -->
+          <div class="form-section-block">
+            <h2 class="section-title">5. OBSERVAÇÕES</h2>
+            <div class="form-group">
+              <textarea id="f-observacoes" rows="4" placeholder="Observações..."></textarea>
+            </div>
+          </div>
+
+          <!-- DECLARAÇÃO -->
+          <div class="form-section-block">
+            <div class="declaracao-box">
+              <label class="checkbox-label">
+                <input type="checkbox" id="f-termos" required>
+                <span>Declaro que as informações fornecidas são verdadeiras e autorizo a Visão Clara a proceder à análise da presente candidatura para fins imobiliários.</span>
+              </label>
+            </div>
+            <button type="submit" class="btn btn-primary btn-lg">Enviar Candidatura</button>
+          </div>
+
+        </form>
+      </main>
+    </div>
+
+    <!-- ========== SUCCESS SECTION ========== -->
+    <div id="success-section" class="section">
+      <div class="success-container">
+        <div class="success-icon">
+          <svg viewBox="0 0 80 80" width="80" height="80">
+            <circle cx="40" cy="40" r="38" fill="#20C997" opacity="0.15" />
+            <path d="M24 40l10 10 22-22" stroke="#20C997" stroke-width="5" fill="none" stroke-linecap="round"
+              stroke-linejoin="round" />
+          </svg>
+        </div>
+        <h2>Candidatura Enviada com Sucesso!</h2>
+        <p class="success-number" id="success-number"></p>
+        <p class="success-date" id="success-date"></p>
+        <span class="badge badge-warning">Em Análise</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Loading -->
+  <div id="loading-overlay" class="loading-overlay" style="display:none">
+    <div class="spinner"></div>
+    <p id="loading-text">A carregar...</p>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="toast"></div>
+
+  <script src="js/config.js"></script>
+  <script src="js/app.js"></script>
+</body>
+
+</html>
