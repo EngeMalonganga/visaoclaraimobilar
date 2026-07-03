@@ -24,6 +24,20 @@ function hideLoading() {
   document.getElementById('loading-overlay').style.display = 'none'
 }
 
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open')
+  document.getElementById('sidebar-overlay').classList.toggle('open')
+}
+
+function shareLink() {
+  const url = 'https://visaoclara-imobilar-qq7ahezix-visaoclaramobiliaria.vercel.app/'
+  navigator.clipboard.writeText(url).then(() => {
+    showToast('Link copiado! Partilhe com amigos.', 'success')
+  }).catch(() => {
+    showToast('Erro ao copiar. Copie manualmente: ' + url, 'info')
+  })
+}
+
 function showSection(id) {
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'))
   document.getElementById(id).classList.add('active')
@@ -156,6 +170,8 @@ async function showDashboard() {
   showSection('dashboard-section')
   document.querySelector('.topbar-title').textContent = 'Dashboard'
   if (currentUser) document.getElementById('user-name-display').textContent = currentUser.nome
+  document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'))
+  document.querySelector('.sidebar-item[data-section="dashboard"]')?.classList.add('active')
   await refreshDashboard()
 }
 
@@ -289,6 +305,8 @@ function showNewApp() {
   document.querySelector('.topbar-title').textContent = 'ÁREA DO CANDIDATO'
   document.getElementById('f-email-cand').value = currentUser?.email || ''
   showSection('form-section')
+  document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'))
+  document.querySelector('.sidebar-item[data-section="form"]')?.classList.add('active')
 }
 
 // ============ PDF VIEWER ============
