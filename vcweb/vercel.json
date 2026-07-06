@@ -1,0 +1,10 @@
+{
+  "rewrites": [
+    { "source": "/js/(.*)", "destination": "/js/$1" },
+    { "source": "/css/(.*)", "destination": "/css/$1" },
+    { "source": "/foto/(.*)", "destination": "/foto/$1" },
+    { "source": "/fotos/(.*)", "destination": "/fotos/$1" },
+    { "source": "/logo/(.*)", "destination": "/logo/$1" },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}
